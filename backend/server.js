@@ -1,0 +1,61 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import mongoose from 'mongoose';
+import authRoutes from './routes/auth.js';
+import deviceRoutes from './routes/devices.js';
+import energyRoutes from './routes/energy.js';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Database connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("connected to the database ");
+  })
+  .catch((err) => {
+    console.log("connection err : ", err)
+  })
+
+
+// Middleware
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
+app.use(express.json());
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    touchAfter: 24 * 3600 // lazy session update
+  }),
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+  }
+}));
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/devices', deviceRoutes);
+app.use('/api/energy', energyRoutes);
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'Server is running!' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
