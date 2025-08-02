@@ -1,6 +1,9 @@
 export const requireAuth = (req, res, next) => {
+  console.log(req.session.userId)
   if (!req.session.userId) {
-    return res.status(401).json({ message: 'Authentication required' });
+    console.log("in authcheck")
+    return res.status(299).json({ message: 'Authentication required' });
   }
+  console.log("after the session check")
   next();
 };

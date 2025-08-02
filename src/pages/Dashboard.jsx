@@ -1,30 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { Zap, TrendingUp, TrendingDown, Plus, Settings, AlertCircle, Lightbulb } from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
+} from 'recharts';
+import {
+  Zap, TrendingUp, TrendingDown,
+  Lightbulb
+} from 'lucide-react';
 
-interface EnergyStats {
-  totalConsumption: {
-    total: number;
-    totalCost: number;
-  };
-  deviceConsumption: Array<{
-    _id: string;
-    totalEnergy: number;
-    totalCost: number;
-    totalHours: number;
-  }>;
-  dailyConsumption: Array<{
-    _id: string;
-    totalEnergy: number;
-    totalCost: number;
-  }>;
-  recommendations: string[];
-}
-
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState<EnergyStats | null>(null);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('week');
 
@@ -35,7 +22,7 @@ const Dashboard: React.FC = () => {
   const fetchEnergyStats = async () => {
     try {
       const response = await fetch(`http://localhost:3001/api/energy/stats?period=${period}`, {
-        credentials: 'include'
+        credentials: 'include',
       });
       if (response.ok) {
         const data = await response.json();
@@ -78,11 +65,10 @@ const Dashboard: React.FC = () => {
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                  period === p
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${period === p
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                  }`}
               >
                 {p.charAt(0).toUpperCase() + p.slice(1)}
               </button>
@@ -137,7 +123,7 @@ const Dashboard: React.FC = () => {
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Device Consumption Chart */}
+          {/* Bar Chart */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Device Consumption
@@ -153,7 +139,7 @@ const Dashboard: React.FC = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Device Distribution Pie Chart */}
+          {/* Pie Chart */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Energy Distribution
@@ -180,7 +166,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Daily Consumption Chart */}
+        {/* Line Chart */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Daily Consumption Trend
@@ -206,7 +192,10 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="space-y-3">
             {stats?.recommendations.map((recommendation, index) => (
-              <div key={index} className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div
+                key={index}
+                className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4"
+              >
                 <p className="text-yellow-800 dark:text-yellow-300">{recommendation}</p>
               </div>
             ))}
@@ -218,3 +207,5 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+
+

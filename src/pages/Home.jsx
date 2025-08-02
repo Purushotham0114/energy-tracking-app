@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { BarChart3, Shield, Zap, Users, TrendingDown, Bell } from 'lucide-react';
 
-const Home: React.FC = () => {
+const Home = () => {
   const { user } = useAuth();
 
   const features = [
@@ -90,22 +90,25 @@ const Home: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-3 w-fit mb-4">
-                  <feature.icon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={index}
+                  className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-3 w-fit mb-4">
+                    <Icon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -154,3 +157,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+

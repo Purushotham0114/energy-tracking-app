@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-react';
 
-const Signup: React.FC = () => {
+const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,14 +19,14 @@ const Signup: React.FC = () => {
   const { signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -49,7 +50,7 @@ const Signup: React.FC = () => {
         navigate('/verify-otp', { state: { email: formData.email } });
       }, 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Signup failed');
+      setError(err?.message || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -208,3 +209,5 @@ const Signup: React.FC = () => {
 };
 
 export default Signup;
+
+

@@ -3,15 +3,17 @@ import pkg from 'react-dom';
 const { preconnect } = pkg;
 
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
-
 export const sendOTPEmail = async (email, otp, name) => {
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  console.log(process.env.EMAIL_PASS)
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,

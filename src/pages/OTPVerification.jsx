@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Shield, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 
-const OTPVerification: React.FC = () => {
+const OTPVerification = () => {
   const [otp, setOTP] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ const OTPVerification: React.FC = () => {
     }
   }, [countdown]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -114,7 +114,9 @@ const OTPVerification: React.FC = () => {
                 id="otp"
                 type="text"
                 value={otp}
-                onChange={(e) => setOTP(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) =>
+                  setOTP(e.target.value.replace(/\D/g, '').slice(0, 6))
+                }
                 required
                 className="w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="000000"
@@ -153,3 +155,5 @@ const OTPVerification: React.FC = () => {
 };
 
 export default OTPVerification;
+
+
