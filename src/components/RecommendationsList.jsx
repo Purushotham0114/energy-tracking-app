@@ -37,7 +37,7 @@ const RecommendationsList = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mb-8"
         >
-            <Card>
+            <Card className="bg-white dark:bg-gray-800">
                 <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center space-x-2">
                         <Bell className="w-5 h-5 text-energy-primary" />

@@ -8,8 +8,8 @@ import { createSampleData } from '../utils/sampleData.js';
 
 export const signup = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
-
+    const { email, phone, password, name } = req.body;
+    console.log(phone);
     if (!email || !password || !name) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -26,6 +26,7 @@ export const signup = async (req, res) => {
 
     const user = new User({
       email,
+      phone,
       password: hashedPassword,
       name,
       emailVerificationToken: otp,

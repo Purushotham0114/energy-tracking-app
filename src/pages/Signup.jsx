@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle, Phone } from 'lucide-react';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: ''
   });
@@ -16,6 +16,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -44,7 +45,8 @@ const Signup = () => {
     }
 
     try {
-      await signup(formData.email, formData.password, formData.name);
+      console.log(formData.phone)
+      await signup(formData.email, formData.password, formData.name, formData.phone);
       setSuccess(true);
       setTimeout(() => {
         navigate('/verify-otp', { state: { email: formData.email } });
@@ -95,6 +97,7 @@ const Signup = () => {
               </div>
             )}
 
+            {/* Full Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Full Name
@@ -114,6 +117,7 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email Address
@@ -133,6 +137,28 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Phone Number */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Phone Number
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  id="phone"
+                  name="phone"
+                  type="number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  pattern="[0-9]{10}"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
@@ -159,6 +185,7 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Confirm Password */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Confirm Password
@@ -185,6 +212,7 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -194,6 +222,7 @@ const Signup = () => {
             </button>
           </form>
 
+          {/* Already have account */}
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-300">
               Already have an account?{' '}
@@ -209,5 +238,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
-
