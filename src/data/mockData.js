@@ -43,7 +43,7 @@ export const appliances = [
     dailyUsage: 8.4,
     weeklyUsage: 58.8,
     monthlyUsage: 252,
-    status: 'on',
+    status: 'oof',
     efficiency: 'low',
     location: 'Basement'
   },

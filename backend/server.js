@@ -1,19 +1,22 @@
 import express from 'express';
 import cors from 'cors';
+
 import dotenv from 'dotenv';
+dotenv.config();
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
 import deviceRoutes from './routes/devices.js';
 import energyRoutes from './routes/energy.js';
+import usageRoutes from "./routes/usage.js";
 
-dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-console.log(process.env.MONGO_URI)
+
 // Database connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
@@ -52,6 +55,8 @@ app.use(session({
 app.use('/api/auth', authRoutes);
 app.use('/api/devices', deviceRoutes);
 app.use('/api/energy', energyRoutes);
+app.use("/api/usage", usageRoutes);
+
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running!' });

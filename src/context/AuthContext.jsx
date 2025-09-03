@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }) => {
         { withCredentials: true }
       );
       setUser(response.data.user);
+      // setUser(true);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed');
     }
