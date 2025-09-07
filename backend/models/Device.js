@@ -13,7 +13,17 @@ const deviceSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['AC', 'TV', 'Heater', 'Fridge', 'Washing Machine', 'Microwave', 'Lights', 'Other']
+    enum: [
+      'AC',
+      'Fridge',
+      'TV',
+      'WashingMachine',
+      'Geyser',
+      'CeilingFan',
+      'WiFiRouter',
+      'Lights',
+      'Other'
+    ]
   },
   wattage: {
     type: Number,
@@ -21,11 +31,27 @@ const deviceSchema = new mongoose.Schema({
   },
   location: {
     type: String,
+    enum: [
+      'Living Room',
+      'Bedroom',
+      'Kitchen',
+      'Bathroom',
+      'Balcony',
+      'Other'
+    ],
     default: 'Living Room'
   },
   isActive: {
     type: Boolean,
     default: true
+  },
+  dailyUsage: {
+    type: Number, // kWh per day (optional metric we can track)
+    default: 0
+  },
+  currentUsage: {
+    type: Number, // current consumption in kW at a given time
+    default: 0
   },
   createdAt: {
     type: Date,

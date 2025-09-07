@@ -134,8 +134,20 @@ router.get("/daily", async (req, res) => {
         const db = client.db("energyDB");
         const collection = db.collection("energy_usage");
 
+        const month = parseInt(req.query.month);
+        const year = parseInt(req.query.year);
+
+        let matchStage = {};
+        if (!isNaN(month) && !isNaN(year)) {
+            // Build date range for that month
+            const startDate = new Date(year, month - 1, 1);   // e.g., 2024-03-01
+            const endDate = new Date(year, month, 1);         // e.g., 2024-04-01
+            matchStage = { date: { $gte: startDate, $lt: endDate } };
+        }
+
         const daily = await collection
             .aggregate([
+                { $match: matchStage },
                 {
                     $group: {
                         _id: {
@@ -150,11 +162,15 @@ router.get("/daily", async (req, res) => {
                 {
                     $project: {
                         date: {
-                            $concat: [
-                                { $toString: "$_id.day" },
-                                "/",
-                                { $toString: "$_id.month" },
-                            ],
+                            $dateToString: {
+                                format: "%Y-%m-%d", date: {
+                                    $dateFromParts: {
+                                        year: "$_id.year",
+                                        month: "$_id.month",
+                                        day: "$_id.day"
+                                    }
+                                }
+                            }
                         },
                         usage: 1,
                         _id: 0,
@@ -170,83 +186,52 @@ router.get("/daily", async (req, res) => {
     }
 });
 
-// 📊 Device Breakdown with cumulative slots
-// GET /api/usage/devices?date=YYYY-MM-DD
 router.get("/devices", async (req, res) => {
     try {
         const client = await getClient();
         const db = client.db("energyDB");
-        const collection = db.collection("energy_usage");
+        const usageCollection = db.collection("energy_usage");
 
-        let startDate, endDate;
-        if (req.query.date) {
-            const parsed = new Date(req.query.date);
-            if (isNaN(parsed.getTime())) {
-                return res
-                    .status(400)
-                    .json({ error: "Invalid date format. Use YYYY-MM-DD" });
-            }
-            startDate = new Date(
-                Date.UTC(parsed.getUTCFullYear(), parsed.getUTCMonth(), parsed.getUTCDate())
-            );
-            endDate = new Date(startDate);
-            endDate.setUTCDate(endDate.getUTCDate() + 1);
-        } else {
-            const latest = await collection
-                .find({ date: { $exists: true } })
-                .sort({ date: -1 })
-                .limit(1)
-                .toArray();
-            if (!latest.length) return res.json([]);
-            const d = new Date(latest[0].date);
-            startDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-            endDate = new Date(startDate);
-            endDate.setUTCDate(endDate.getUTCDate() + 1);
+        const { date } = req.query;
+        if (!date) {
+            return res.status(400).json({ error: "date is required (YYYY-MM-DD)" });
         }
 
-        const pipeline = [
-            { $match: { date: { $gte: startDate, $lt: endDate } } },
+        // Parse input date
+        const parsed = new Date(date + "T00:00:00.000Z"); // force UTC midnight
+        const nextDay = new Date(parsed);
+        nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+
+        console.log("DEBUG startDate:", parsed, " endDate:", nextDay);
+
+        // Aggregate usage for that day
+        const usage = await usageCollection.aggregate([
             {
-                $group: {
-                    _id: { device: "$device_id", ts: "$timestamp" },
-                    slotUsage: { $sum: "$energy_consumed" },
-                },
+                $match: {
+                    date: { $gte: parsed, $lt: nextDay }
+                }
             },
-            { $sort: { "_id.device": 1, "_id.ts": 1 } },
             {
                 $group: {
-                    _id: "$_id.device",
-                    slots: { $push: { timestamp: "$_id.ts", usage: "$slotUsage" } },
-                },
+                    _id: "$device_id",
+                    totalUsage: { $sum: "$energy_consumed" }
+                }
             },
             {
                 $project: {
                     _id: 0,
-                    name: "$_id",
-                    slots: {
-                        $map: {
-                            input: { $range: [0, { $size: "$slots" }] },
-                            as: "idx",
-                            in: {
-                                timestamp: { $arrayElemAt: ["$slots.timestamp", "$$idx"] },
-                                cumulative: {
-                                    $sum: { $slice: ["$slots.usage", 0, { $add: ["$$idx", 1] }] },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            { $sort: { name: 1 } },
-        ];
+                    device: "$_id",
+                    totalUsage: 1
+                }
+            }
+        ]).toArray();
 
-        const devices = await collection.aggregate(pipeline).toArray();
-
-        res.json(devices);
+        res.json(usage);
     } catch (err) {
         console.error("Error in /devices:", err);
-        res.status(500).json({ error: "Failed to fetch devices cumulative usage" });
+        res.status(500).json({ error: "Failed to fetch devices usage" });
     }
 });
+
 
 export default router;
