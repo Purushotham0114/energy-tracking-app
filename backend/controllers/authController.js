@@ -6,10 +6,11 @@ import { sendOTPEmail } from '../utils/emailService.js';
 import { generateOTP } from '../utils/otpGenerator.js';
 import { createSampleData } from '../utils/sampleData.js';
 
+
 export const signup = async (req, res) => {
   try {
     const { email, phone, password, name } = req.body;
-    console.log(phone);
+
     if (!email || !password || !name) {
       return res.status(400).json({ message: 'All fields are required' });
     }

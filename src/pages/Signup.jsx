@@ -45,7 +45,6 @@ const Signup = () => {
     }
 
     try {
-      console.log(formData.phone)
       await signup(formData.email, formData.password, formData.name, formData.phone);
       setSuccess(true);
       setTimeout(() => {

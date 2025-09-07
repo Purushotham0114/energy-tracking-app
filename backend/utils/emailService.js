@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import pkg from 'react-dom';
 const { preconnect } = pkg;
 
-
 export const sendOTPEmail = async (email, otp, name) => {
 
   const transporter = nodemailer.createTransport({

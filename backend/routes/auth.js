@@ -2,6 +2,7 @@ import express from 'express';
 import { signup, login, logout, verifyOTP, getProfile, resendOTP } from '../controllers/authController.js';
 import { requireAuth } from '../middleware/auth.js';
 
+
 const router = express.Router();
 
 router.post('/signup', signup);
