@@ -322,7 +322,11 @@ const ChartsSection = () => {
                 const daily = await dailyRes.json();
                 const devicesRaw = await devicesRes.json();
 
+                console.log("abc")
+                console.log('device  ', devicesRaw)
+
                 if (!mounted) return;
+
 
                 setHourlyData(Array.isArray(hourly) ? hourly : []);
                 setDailyData(Array.isArray(daily) ? daily : []);
@@ -383,7 +387,7 @@ const ChartsSection = () => {
         }, 400); // quick animation
         return () => { if (slotIntervalRef.current) clearInterval(slotIntervalRef.current); };
     }, [appliances, currentSlot]);
-
+    console.log('top  ', topAppliances)
     const chartData = timeframe === "hourly" ? visibleHourly : dailyData;
     const pieData = topAppliances.map(d => ({ name: d.name, value: d.usage }));
     const hourlyTicks = (hourlyData && hourlyData.length === 24) ? Array.from({ length: 12 }, (_, i) => i * 2) : undefined;
