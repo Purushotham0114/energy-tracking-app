@@ -286,6 +286,7 @@ const ChartsSection = () => {
         return normalizedDevices.map(d => {
             let usage = 0;
             if (Array.isArray(d.slots) && d.slots.length) {
+                // slots are already cumulative → just take the latest value up to idx
                 usage = d.slots[Math.min(idx, d.slots.length - 1)] ?? 0;
             } else {
                 usage = d.dailyUsage ?? d.currentUsage ?? 0;
@@ -294,12 +295,16 @@ const ChartsSection = () => {
         }).sort((a, b) => b.usage - a.usage);
     }
 
+
     // ---------- Dynamic simulated date ----------
     const now = new Date();
     // Map real current time to March 2024 (day can be 15 for dev)
     const simulatedNow = new Date(`2024-03-15T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`);
     const currentHour = simulatedNow.getHours();
-    const currentSlot = Math.floor(simulatedNow.getMinutes() / 20); // 20-min slots
+    // const currentSlot = Math.floor(simulatedNow.getMinutes() / 20); // 20-min slots
+    const currentSlot =
+        Math.floor(simulatedNow.getHours() * 3 + simulatedNow.getMinutes() / 20);
+
 
     // ---------- Fetch once ----------
     useEffect(() => {
@@ -307,7 +312,7 @@ const ChartsSection = () => {
 
         async function fetchData() {
             try {
-                const dateStr = "2024-03-15"; // always simulated March 2024
+                const dateStr = "2024-03-03"; // always simulated March 2024
                 const [hourlyRes, dailyRes, devicesRes] = await Promise.all([
                     fetch(`/api/usage/hourly?date=${dateStr}`),
                     fetch(`/api/usage/daily?month=3&year=2024`),
