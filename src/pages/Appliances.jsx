@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { appliances } from '../data/mockData';
 
 const Appliances = () => {
     const [filter, setFilter] = useState('all');
+    const [appliances, setAppliances] = useState([]); // State for fetched data
+    const [loading, setLoading] = useState(true); // Optional: loading state
 
-    const filteredAppliances = appliances.filter(appliance => {
+    useEffect(() => {
+        fetch('/api/devices', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                setAppliances(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+        console.log("apliances", appliances)
+    }, []);
+
+    const filteredAppliances = appliances.filter((appliance) => {
         if (filter === 'all') return true;
         return appliance.status === filter;
     });
@@ -38,6 +53,14 @@ const Appliances = () => {
                 return 'text-muted-foreground';
         }
     };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <span className="text-muted-foreground text-lg">Loading devices...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
