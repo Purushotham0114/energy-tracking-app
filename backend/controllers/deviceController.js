@@ -5,16 +5,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 
-// ------------------ GET DEVICES ------------------
-// Fetch devices with usage stats (supports ?date=YYYY-MM-DD)
-
 import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGO_URI;
 let client;
 
-// ✅ Reuse a single MongoDB client connection
-export async function getClient() {
+async function getClient() {
   if (!client) {
     if (!uri) {
       throw new Error("❌ MONGO_URI is not defined. Check your .env file.");
@@ -26,7 +22,6 @@ export async function getClient() {
   return client;
 }
 
-// ✅ Controller: Fetch device stats directly from energyDB.energy_usage
 export const getDevices = async (req, res) => {
   try {
     const client = await getClient();
@@ -41,16 +36,28 @@ export const getDevices = async (req, res) => {
     const targetDate = moment(date, "YYYY-MM-DD");
     const startOfDay = targetDate.clone().startOf("day").toDate();
     const endOfDay = targetDate.clone().endOf("day").toDate();
+    const nowOfDay = moment().isSame(targetDate, "day")
+      ? new Date() // if today's date, stop at current time
+      : endOfDay;  // if past date, take full day
+
     const startOfWeek = targetDate.clone().startOf("week").toDate();
     const startOfMonth = targetDate.clone().startOf("month").toDate();
 
-    // ✅ Get all unique device names in DB
+    // ✅ Get all unique device names
     const deviceNames = await collection.distinct("device_id");
 
     const results = await Promise.all(
       deviceNames.map(async (deviceName) => {
-        // Parallel queries for performance
-        const [dailyAgg, weeklyAgg, monthlyAgg, latestUsage] = await Promise.all([
+        const [currentAgg, dailyAgg, weeklyAgg, monthlyAgg, latestUsage] = await Promise.all([
+          // ✅ Current usage till now
+          collection
+            .aggregate([
+              { $match: { device_id: deviceName, date: { $gte: startOfDay, $lte: nowOfDay } } },
+              { $group: { _id: null, total: { $sum: "$energy_consumed" } } },
+            ])
+            .toArray(),
+
+          // ✅ Daily total (full day)
           collection
             .aggregate([
               { $match: { device_id: deviceName, date: { $gte: startOfDay, $lte: endOfDay } } },
@@ -58,6 +65,7 @@ export const getDevices = async (req, res) => {
             ])
             .toArray(),
 
+          // ✅ Weekly total
           collection
             .aggregate([
               { $match: { device_id: deviceName, date: { $gte: startOfWeek, $lte: endOfDay } } },
@@ -65,6 +73,7 @@ export const getDevices = async (req, res) => {
             ])
             .toArray(),
 
+          // ✅ Monthly total
           collection
             .aggregate([
               { $match: { device_id: deviceName, date: { $gte: startOfMonth, $lte: endOfDay } } },
@@ -72,9 +81,10 @@ export const getDevices = async (req, res) => {
             ])
             .toArray(),
 
+          // ✅ Latest record for status/efficiency
           collection.findOne(
             { device_id: deviceName, date: { $lte: endOfDay } },
-            { sort: { date: -1 } } // ✅ Correct sort syntax
+            { sort: { date: -1 } }
           ),
         ]);
 
@@ -82,10 +92,10 @@ export const getDevices = async (req, res) => {
           id: deviceName,
           name: deviceName,
           category: deviceName,
-          location: "-", // optional, you can map locations if available
+          location: "-",
           status: latestUsage?.device_on_flag ? "on" : "off",
           efficiency: latestUsage?.device_load_category?.toLowerCase() || "medium",
-          currentUsage: latestUsage?.energy_consumed || 0,
+          currentUsage: currentAgg[0]?.total || 0,  // ✅ FIXED HERE
           dailyUsage: dailyAgg[0]?.total || 0,
           weeklyUsage: weeklyAgg[0]?.total || 0,
           monthlyUsage: monthlyAgg[0]?.total || 0,
@@ -99,7 +109,6 @@ export const getDevices = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // ------------------ CREATE DEVICE ------------------
 export const createDevice = async (req, res) => {
