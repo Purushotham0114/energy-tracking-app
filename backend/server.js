@@ -31,7 +31,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'http://localhost:5174'
+    'https://energy-tracking-app.onrender.com'
 
   ],
   credentials: true
@@ -51,7 +51,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 }));
