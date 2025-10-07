@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+//add
 import { Switch } from '../components/ui/switch';
 import { useTheme } from '../context/ThemeContext';
 import { Bell, Settings as SettingsIcon, Home } from 'lucide-react';
