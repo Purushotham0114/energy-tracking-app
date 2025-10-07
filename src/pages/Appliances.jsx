@@ -10,7 +10,7 @@ const Appliances = () => {
     const [loading, setLoading] = useState(true); // Optional: loading state
 
     useEffect(() => {
-        fetch('/api/devices', { credentials: 'include' })
+        fetch('/api/devices?date=2024-03-15', { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 setAppliances(data);
@@ -73,7 +73,7 @@ const Appliances = () => {
                 >
                     <h1 className="text-3xl font-bold mb-4">Smart Appliances</h1>
                     <p className="text-muted-foreground mb-6">
-                        Monitor and control your home appliances in real-time
+                        Monitor your home appliances in real-time
                     </p>
 
                     {/* Filter Buttons */}
@@ -125,8 +125,8 @@ const Appliances = () => {
                                         <div className="flex items-baseline space-x-2 mb-1">
                                             <span className="text-2xl font-bold text-energy-primary">
                                                 {appliance.currentUsage > 0
-                                                    ? (appliance.currentUsage / 1000).toFixed(1)
-                                                    : '0.0'}
+                                                    ? (appliance.currentUsage).toFixed(3)
+                                                    : '0.000'}
                                             </span>
                                             <span className="text-sm text-muted-foreground">kW</span>
                                         </div>

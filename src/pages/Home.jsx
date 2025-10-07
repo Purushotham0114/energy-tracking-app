@@ -25,7 +25,7 @@ const Home = () => {
         </motion.div>
 
         {/* Dashboard Cards */}
-        <DashboardCards />
+        {/* <DashboardCards /> */}
 
         {/* Charts Section */}
         <ChartsSection />
@@ -48,10 +48,10 @@ const Home = () => {
             <div className="text-2xl font-bold text-energy-warning mb-2">24%</div>
             <div className="text-sm text-muted-foreground">Peak Hour Usage</div>
           </div>
-          <div className="text-center p-6 rounded-lg bg-card/50 border border-border/50">
+          {/* <div className="text-center p-6 rounded-lg bg-card/50 border border-border/50">
             <div className="text-2xl font-bold text-energy-primary mb-2">$65</div>
             <div className="text-sm text-muted-foreground">Monthly Savings Potential</div>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </div>

@@ -1,66 +1,105 @@
 import Device from '../models/Device.js';
 import EnergyUsage from '../models/EnergyUsage.js';
 import moment from 'moment';
+import dotenv from "dotenv";
+dotenv.config();
+
 
 // ------------------ GET DEVICES ------------------
 // Fetch devices with usage stats (supports ?date=YYYY-MM-DD)
+
+import { MongoClient } from "mongodb";
+
+const uri = process.env.MONGO_URI;
+let client;
+
+// ✅ Reuse a single MongoDB client connection
+export async function getClient() {
+  if (!client) {
+    if (!uri) {
+      throw new Error("❌ MONGO_URI is not defined. Check your .env file.");
+    }
+    client = new MongoClient(uri);
+    await client.connect();
+    console.log("✅ Connected to MongoDB");
+  }
+  return client;
+}
+
+// ✅ Controller: Fetch device stats directly from energyDB.energy_usage
 export const getDevices = async (req, res) => {
   try {
-    const userId = req.session.userId;
-    const { date } = req.query; // optional ?date=YYYY-MM-DD
+    const client = await getClient();
+    const db = client.db("energyDB");
+    const collection = db.collection("energy_usage");
 
-    // Default to today if no date is provided
-    const targetDate = date ? moment(date, 'YYYY-MM-DD') : moment();
-    const startOfDay = targetDate.clone().startOf('day').toDate();
-    const endOfDay = targetDate.clone().endOf('day').toDate();
+    const { date } = req.query;
+    if (!date) {
+      return res.status(400).json({ error: "date is required (YYYY-MM-DD)" });
+    }
 
-    const startOfWeek = targetDate.clone().startOf('week').toDate();
-    const startOfMonth = targetDate.clone().startOf('month').toDate();
+    const targetDate = moment(date, "YYYY-MM-DD");
+    const startOfDay = targetDate.clone().startOf("day").toDate();
+    const endOfDay = targetDate.clone().endOf("day").toDate();
+    const startOfWeek = targetDate.clone().startOf("week").toDate();
+    const startOfMonth = targetDate.clone().startOf("month").toDate();
 
-    // Fetch devices owned by the user
-    const devices = await Device.find({ userId });
+    // ✅ Get all unique device names in DB
+    const deviceNames = await collection.distinct("device_id");
 
-    // Attach usage stats to each device
-    const result = await Promise.all(
-      devices.map(async (device) => {
+    const results = await Promise.all(
+      deviceNames.map(async (deviceName) => {
+        // Parallel queries for performance
         const [dailyAgg, weeklyAgg, monthlyAgg, latestUsage] = await Promise.all([
-          EnergyUsage.aggregate([
-            { $match: { deviceId: device._id, date: { $gte: startOfDay, $lte: endOfDay } } },
-            { $group: { _id: null, total: { $sum: "$energy_consumed" } } }
-          ]),
-          EnergyUsage.aggregate([
-            { $match: { deviceId: device._id, date: { $gte: startOfWeek, $lte: endOfDay } } },
-            { $group: { _id: null, total: { $sum: "$energy_consumed" } } }
-          ]),
-          EnergyUsage.aggregate([
-            { $match: { deviceId: device._id, date: { $gte: startOfMonth, $lte: endOfDay } } },
-            { $group: { _id: null, total: { $sum: "$energy_consumed" } } }
-          ]),
-          EnergyUsage.findOne({ deviceId: device._id, date: { $lte: endOfDay } })
-            .sort({ timestamp: -1 })
+          collection
+            .aggregate([
+              { $match: { device_id: deviceName, date: { $gte: startOfDay, $lte: endOfDay } } },
+              { $group: { _id: null, total: { $sum: "$energy_consumed" } } },
+            ])
+            .toArray(),
+
+          collection
+            .aggregate([
+              { $match: { device_id: deviceName, date: { $gte: startOfWeek, $lte: endOfDay } } },
+              { $group: { _id: null, total: { $sum: "$energy_consumed" } } },
+            ])
+            .toArray(),
+
+          collection
+            .aggregate([
+              { $match: { device_id: deviceName, date: { $gte: startOfMonth, $lte: endOfDay } } },
+              { $group: { _id: null, total: { $sum: "$energy_consumed" } } },
+            ])
+            .toArray(),
+
+          collection.findOne(
+            { device_id: deviceName, date: { $lte: endOfDay } },
+            { sort: { date: -1 } } // ✅ Correct sort syntax
+          ),
         ]);
 
         return {
-          id: device._id,
-          name: device.name,
-          category: device.type,
-          location: device.location,
-          status: device.isActive ? 'on' : 'off',
-          efficiency: device.efficiency || 'medium',
+          id: deviceName,
+          name: deviceName,
+          category: deviceName,
+          location: "-", // optional, you can map locations if available
+          status: latestUsage?.device_on_flag ? "on" : "off",
+          efficiency: latestUsage?.device_load_category?.toLowerCase() || "medium",
           currentUsage: latestUsage?.energy_consumed || 0,
           dailyUsage: dailyAgg[0]?.total || 0,
           weeklyUsage: weeklyAgg[0]?.total || 0,
-          monthlyUsage: monthlyAgg[0]?.total || 0
+          monthlyUsage: monthlyAgg[0]?.total || 0,
         };
       })
     );
 
-    res.json(result);
+    res.json(results);
   } catch (error) {
-    console.error('Get devices error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("❌ Get devices error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // ------------------ CREATE DEVICE ------------------
 export const createDevice = async (req, res) => {

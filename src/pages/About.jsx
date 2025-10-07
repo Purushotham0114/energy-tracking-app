@@ -2,16 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Home, Settings, Bell, BellOff } from 'lucide-react';
+import { Home, Settings, Bell, Moon, BellOff } from 'lucide-react';
 
 const About = () => {
   const technologies = [
     { name: 'React 18', description: 'Modern frontend framework with hooks' },
-    { name: 'TypeScript', description: 'Type-safe JavaScript development' },
+    // { name: 'TypeScript', description: 'Type-safe JavaScript development' },
     { name: 'Tailwind CSS', description: 'Utility-first CSS framework' },
     { name: 'Framer Motion', description: 'Smooth animations and transitions' },
     { name: 'Recharts', description: 'Responsive chart library' },
-    { name: 'Shadcn/UI', description: 'Beautiful and accessible UI components' },
+    // { name: 'Shadcn/UI', description: 'Beautiful and accessible UI components' },
     { name: 'React Router', description: 'Client-side routing' },
     { name: 'Vite', description: 'Fast build tool and development server' }
   ];
@@ -33,7 +33,7 @@ const About = () => {
       description: 'AI-powered suggestions tailored to your usage patterns help optimize energy consumption and reduce costs.'
     },
     {
-      icon: BellOff,
+      icon: Moon,
       title: 'Dark Mode Support',
       description: 'Beautiful light and dark themes provide a comfortable viewing experience at any time of day.'
     }
@@ -50,7 +50,7 @@ const About = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl font-bold bg-gradient-to-r from-energy-primary to-energy-secondary bg-clip-text text-transparent mb-6">
-            About EnergyMon
+            About EnergyMonitor
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             EnergyMon is a comprehensive smart home energy monitoring dashboard designed to help homeowners
