@@ -83,10 +83,11 @@ const Dashboard = () => {
   useEffect(() => {
     fetchEnergyStats();
   }, [period]);
+  const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
 
   const fetchEnergyStats = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/energy/stats?period=${period}`, {
+      const response = await fetch(`${BASE_URL}/api/energy/stats?period=${period}`, {
         credentials: 'include',
       });
       if (response.ok) {

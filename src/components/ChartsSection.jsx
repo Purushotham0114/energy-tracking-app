@@ -309,14 +309,15 @@ const ChartsSection = () => {
     // ---------- Fetch once ----------
     useEffect(() => {
         let mounted = true;
+        const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
 
         async function fetchData() {
             try {
                 const dateStr = "2024-03-03"; // always simulated March 2024
                 const [hourlyRes, dailyRes, devicesRes] = await Promise.all([
-                    fetch(`/api/usage/hourly?date=${dateStr}`),
-                    fetch(`/api/usage/daily?month=3&year=2024`),
-                    fetch(`/api/usage/devices?date=${dateStr}`)
+                    fetch(`${BASE_URL}/api/usage/hourly?date=${dateStr}`),
+                    fetch(`${BASE_URL}/api/usage/daily?month=3&year=2024`),
+                    fetch(`${BASE_URL}/api/usage/devices?date=${dateStr}`)
                 ]);
 
                 if (!hourlyRes.ok || !dailyRes.ok || !devicesRes.ok) {

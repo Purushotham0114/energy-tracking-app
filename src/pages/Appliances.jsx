@@ -8,12 +8,14 @@ const Appliances = () => {
     const [filter, setFilter] = useState('all');
     const [appliances, setAppliances] = useState([]); // State for fetched data
     const [loading, setLoading] = useState(true); // Optional: loading state
-
+    const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
+    // const BASE_URL = 'http://localhost:3001';
     useEffect(() => {
-        fetch('/api/devices?date=2024-03-15', { credentials: 'include' })
+        fetch(`${BASE_URL}/api/devices?date=2024-03-15`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
-                setAppliances(data);
+                setAppliances(Array.isArray(data) ? data : []);
+                // setAppliances(data);
                 setLoading(false);
             })
             .catch(err => {

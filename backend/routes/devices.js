@@ -5,7 +5,7 @@ import { requireAuth } from '../middleware/auth.js';
 const router = express.Router();
 
 console.log("in th routes of the devices")
-router.use(requireAuth);
+// router.use(requireAuth);
 
 router.get('/', getDevices);
 router.post('/', createDevice);

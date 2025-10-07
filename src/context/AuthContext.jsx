@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/auth/profile', {
+      const response = await axios.get('https://energy-tracking-app-backend.onrender.com/api/auth/profile', {
         withCredentials: true,
       });
       if (response.data.success) {
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post(
-        'http://localhost:3001/api/auth/login',
+        'https://energy-tracking-app-backend.onrender.com/api/auth/login',
         { email, password },
         { withCredentials: true }
       );
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.post(
-        'http://localhost:3001/api/auth/logout',
+        'https://energy-tracking-app-backend.onrender.com/api/auth/logout',
         {},
         { withCredentials: true }
       );
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, name, phone) => {
     try {
       await axios.post(
-        'http://localhost:3001/api/auth/signup',
+        'https://energy-tracking-app-backend.onrender.com/api/auth/signup',
         { email, password, name, phone },
         { withCredentials: true }
       );
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   const verifyOTP = async (email, otp) => {
     try {
       await axios.post(
-        'http://localhost:3001/api/auth/verify-otp',
+        'https://energy-tracking-app-backend.onrender.com/api/auth/verify-otp',
         { email, otp },
         { withCredentials: true }
       );
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
   const resendOTP = async (email) => {
     try {
       await axios.post(
-        'http://localhost:3001/api/auth/resend-otp',
+        'https://energy-tracking-app-backend.onrender.com/api/auth/resend-otp',
         { email },
         { withCredentials: true }
       );
