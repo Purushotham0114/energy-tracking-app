@@ -309,8 +309,8 @@ const ChartsSection = () => {
     // ---------- Fetch once ----------
     useEffect(() => {
         let mounted = true;
-        const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
-
+        // const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
+        const BASE_URL = 'http://localhost:3001';
         async function fetchData() {
             try {
                 const dateStr = "2024-03-03"; // always simulated March 2024

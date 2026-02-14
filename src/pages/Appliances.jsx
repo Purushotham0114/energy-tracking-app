@@ -11,7 +11,7 @@ const Appliances = () => {
     const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
     // const BASE_URL = 'http://localhost:3001';
     useEffect(() => {
-        fetch(`${BASE_URL}/api/devices?date=2024-03-15`, { credentials: 'include' })
+        fetch(`${BASE_URL}/api/devices?date=2024-03-03`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 setAppliances(Array.isArray(data) ? data : []);

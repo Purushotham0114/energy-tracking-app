@@ -2,7 +2,8 @@ import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
-
+const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
+// const BASE_URL = 'http://localhost:3001';
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get('https://energy-tracking-app-backend.onrender.com/api/auth/profile', {
+      const response = await axios.get(`${BASE_URL}/api/auth/profile`, {
         withCredentials: true,
       });
       if (response.data.success) {
@@ -37,12 +38,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post(
-        'https://energy-tracking-app-backend.onrender.com/api/auth/login',
+        `${BASE_URL}/api/auth/login`,
         { email, password },
         { withCredentials: true }
       );
       setUser(response.data.user);
-      // setUser(true);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed');
     }
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.post(
-        'https://energy-tracking-app-backend.onrender.com/api/auth/logout',
+        `${BASE_URL}/api/auth/logout`,
         {},
         { withCredentials: true }
       );
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, name, phone) => {
     try {
       await axios.post(
-        'https://energy-tracking-app-backend.onrender.com/api/auth/signup',
+        `${BASE_URL}/api/auth/signup`,
         { email, password, name, phone },
         { withCredentials: true }
       );
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   const verifyOTP = async (email, otp) => {
     try {
       await axios.post(
-        'https://energy-tracking-app-backend.onrender.com/api/auth/verify-otp',
+        `${BASE_URL}/api/auth/verify-otp`,
         { email, otp },
         { withCredentials: true }
       );
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
   const resendOTP = async (email) => {
     try {
       await axios.post(
-        'https://energy-tracking-app-backend.onrender.com/api/auth/resend-otp',
+        `${BASE_URL}/api/auth/resend-otp`,
         { email },
         { withCredentials: true }
       );
@@ -109,4 +109,3 @@ export const AuthProvider = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
