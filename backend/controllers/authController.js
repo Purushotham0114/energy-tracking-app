@@ -54,32 +54,42 @@ export const verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
 
     if (!email || !otp) {
-      return res.status(400).json({ message: 'Email and OTP are required' });
+      return res.status(400).json({ message: "Email and OTP are required" });
     }
 
-    const user = await User.findOne({
-      email,
-      emailVerificationToken: otp,
-      emailVerificationExpires: { $gt: Date.now() }
-    });
+    const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired OTP' });
+      return res.status(400).json({ message: "User not found" });
     }
 
+    // If OTP expired → delete user
+    if (user.emailVerificationExpires < Date.now()) {
+      await User.deleteOne({ email });
+      return res.status(400).json({ message: "OTP expired. Please signup again." });
+    }
+
+    // If OTP incorrect
+    if (user.emailVerificationToken !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // Success case
     user.isEmailVerified = true;
     user.emailVerificationToken = null;
     user.emailVerificationExpires = null;
-    await user.save();
 
+    await user.save();
     await createSampleData(user._id);
 
-    res.json({ message: 'Email verified successfully' });
+    res.json({ message: "Email verified successfully" });
+
   } catch (error) {
-    console.error('OTP verification error:', error);
-    res.status(500).json({ message: 'Server error during OTP verification' });
+    console.error("OTP verification error:", error);
+    res.status(500).json({ message: "Server error during OTP verification" });
   }
 };
+
 
 export const login = async (req, res) => {
   try {
