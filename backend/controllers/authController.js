@@ -14,7 +14,7 @@ export const signup = async (req, res) => {
     if (!email || !password || !name) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-
+    console.log("in sgn up")
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
@@ -34,7 +34,7 @@ export const signup = async (req, res) => {
       emailVerificationExpires: otpExpires
     });
 
-    await user.save();
+    await user.save()
 
     await sendOTPEmail(email, otp, name);
 
@@ -52,8 +52,6 @@ export const signup = async (req, res) => {
 export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    console.log(email);
-    console.log(otp)
 
     if (!email || !otp) {
       return res.status(400).json({ message: 'Email and OTP are required' });
