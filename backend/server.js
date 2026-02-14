@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import deviceRoutes from './routes/devices.js';
 import energyRoutes from './routes/energy.js';
 import usageRoutes from "./routes/usage.js";
+import requestLogger from './middleware/logger.js'
 
 
 
@@ -18,6 +19,7 @@ const PORT = process.env.PORT || 3001;
 
 
 // Database connection
+console.log(process.env.MONGO_URI)
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("connected to the database ");
@@ -31,7 +33,9 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://energy-tracking-app.onrender.com'
+    'https://energy-tracking-app.onrender.com',
+    'https://energy-tracking-app-mauve.vercel.app'
+
 
   ],
   credentials: true
@@ -55,6 +59,8 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 }));
+
+app.use(requestLogger);
 
 // Routes
 app.use('/api/auth', authRoutes);
