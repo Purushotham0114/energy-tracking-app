@@ -13,6 +13,7 @@ export const sendOTPEmail = async (email, otp, name) => {
   });
 
   console.log(process.env.EMAIL_PASS)
+  console.log(process.env.EMAIL_USER);
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
