@@ -18,6 +18,7 @@ import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import OTPVerification from './pages/OTPVerification'
+import Analytics from './pages/Analytics';
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
                 <Route path="/appliances" element={<ProtectedRoute element={<Appliances />} />} />
                 <Route path="/recommendations" element={<ProtectedRoute element={<Recommendations />} />} />
                 <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
+                <Route path="/analytics" element={<ProtectedRoute element={<Analytics />} />} />
 
                 {/* ✅ Catch-all */}
                 <Route path="*" element={<NotFound />} />

@@ -1,9 +1,7 @@
-import axios from 'axios';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { api } from '../lib/api';
 
 const AuthContext = createContext();
-const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
-// const BASE_URL = 'http://localhost:3001';
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -22,11 +20,9 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/auth/profile`, {
-        withCredentials: true,
-      });
+      const response = await api.get('/api/auth/profile');
       if (response.data.success) {
-        setUser(response.data);
+        setUser(response.data.user);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -37,11 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/api/auth/login`,
-        { email, password },
-        { withCredentials: true }
-      );
+      const response = await api.post('/api/auth/login', { email, password });
       setUser(response.data.user);
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed');
@@ -50,11 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post(
-        `${BASE_URL}/api/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await api.post('/api/auth/logout');
       setUser(null);
     } catch (error) {
       console.error('Logout failed:', error);
@@ -63,11 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (email, password, name, phone) => {
     try {
-      await axios.post(
-        `${BASE_URL}/api/auth/signup`,
-        { email, password, name, phone },
-        { withCredentials: true }
-      );
+      await api.post('/api/auth/signup', { email, password, name, phone });
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Signup failed');
     }
@@ -75,11 +59,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyOTP = async (email, otp) => {
     try {
-      await axios.post(
-        `${BASE_URL}/api/auth/verify-otp`,
-        { email, otp },
-        { withCredentials: true }
-      );
+      await api.post('/api/auth/verify-otp', { email, otp });
     } catch (error) {
       throw new Error(error.response?.data?.message || 'OTP verification failed');
     }
@@ -87,11 +67,7 @@ export const AuthProvider = ({ children }) => {
 
   const resendOTP = async (email) => {
     try {
-      await axios.post(
-        `${BASE_URL}/api/auth/resend-otp`,
-        { email },
-        { withCredentials: true }
-      );
+      await api.post('/api/auth/resend-otp', { email });
     } catch (error) {
       throw new Error(error.response?.data?.message || 'OTP resend failed');
     }

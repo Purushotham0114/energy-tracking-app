@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import deviceRoutes from './routes/devices.js';
 import energyRoutes from './routes/energy.js';
 import usageRoutes from "./routes/usage.js";
+import analyticsRoutes from "./routes/analytics.js";
 import requestLogger from './middleware/logger.js'
 
 
@@ -55,7 +56,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 }));
@@ -67,6 +68,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/devices', deviceRoutes);
 app.use('/api/energy', energyRoutes);
 app.use("/api/usage", usageRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 
 app.get('/api/health', (req, res) => {

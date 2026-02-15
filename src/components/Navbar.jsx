@@ -25,6 +25,7 @@ const Navbar = () => {
       { path: '/', label: 'Home', icon: Home },
       { path: '/appliances', label: 'Appliances' },
       { path: '/recommendations', label: 'Recommendations' },
+      { path: '/analytics', label: 'Analytics' },
       { path: '/settings', label: 'Settings', icon: Settings },
     ] : []),
     { path: '/about', label: 'About' }

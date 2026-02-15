@@ -5,7 +5,7 @@ import EnergyUsage from '../models/EnergyUsage.js';
 import { sendOTPEmail } from '../utils/emailService.js';
 import { generateOTP } from '../utils/otpGenerator.js';
 import { createSampleData } from '../utils/sampleData.js';
-
+import { sendSMS } from '../utils/twilioService.js'
 
 export const signup = async (req, res) => {
   try {
@@ -35,9 +35,11 @@ export const signup = async (req, res) => {
     });
 
     await user.save()
+    console.log("user saved");
 
-    await sendOTPEmail(email, otp, name);
-
+    // await sendOTPEmail(email, otp, name);
+    await sendSMS(phone, otp);
+    console.log("otp send")
     res.status(201).json({
       message: 'User created successfully. Please check your email for OTP verification.',
       userId: user._id

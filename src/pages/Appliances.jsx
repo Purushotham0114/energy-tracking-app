@@ -3,15 +3,14 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
+import { apiFetch } from '../lib/api';
 
 const Appliances = () => {
     const [filter, setFilter] = useState('all');
     const [appliances, setAppliances] = useState([]); // State for fetched data
     const [loading, setLoading] = useState(true); // Optional: loading state
-    const BASE_URL = "https://energy-tracking-app-backend.onrender.com";
-    // const BASE_URL = 'http://localhost:3001';
     useEffect(() => {
-        fetch(`${BASE_URL}/api/devices?date=2024-03-03`, { credentials: 'include' })
+        apiFetch('/api/devices?date=2024-03-03')
             .then(res => res.json())
             .then(data => {
                 setAppliances(Array.isArray(data) ? data : []);

@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['recharts', 'framer-motion'],
   },
   server: {
     proxy: {
@@ -14,5 +15,15 @@ export default defineConfig({
         changeOrigin: true
       }
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          recharts: ['recharts'],
+          'framer-motion': ['framer-motion'],
+        },
+      },
+    },
+  },
 });
