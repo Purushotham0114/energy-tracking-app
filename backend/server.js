@@ -47,6 +47,9 @@ app.use(cors({
 
 app.use(express.json());
 
+const isProduction = process.env.NODE_ENV === 'production' || !!process.env.RENDER;
+console.log('Environment:', { NODE_ENV: process.env.NODE_ENV, RENDER: process.env.RENDER, isProduction });
+
 // Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -57,9 +60,9 @@ app.use(session({
     touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: isProduction,
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 }));
