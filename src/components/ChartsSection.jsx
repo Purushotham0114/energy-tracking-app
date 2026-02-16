@@ -62,10 +62,13 @@ const ChartsSection = () => {
 
         async function fetchData() {
             try {
-                const dateStr = "2024-03-03";
+                const now = new Date();
+                const dateStr = now.toISOString().slice(0, 10); // "YYYY-MM-DD"
+                const month = now.getMonth() + 1;
+                const year = now.getFullYear();
                 const [hourlyRes, dailyRes, devicesRes] = await Promise.all([
                     apiFetch(`/api/usage/hourly?date=${dateStr}`),
-                    apiFetch('/api/usage/daily?month=3&year=2024'),
+                    apiFetch(`/api/usage/daily?month=${month}&year=${year}`),
                     apiFetch(`/api/usage/devices?date=${dateStr}`)
                 ]);
 

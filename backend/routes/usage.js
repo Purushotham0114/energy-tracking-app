@@ -28,7 +28,7 @@ router.get("/stats", async (req, res) => {
     try {
         const dbClient = await getClient();
         const db = dbClient.db("energyDB");
-        const collection = db.collection("energy_usage");
+        const collection = db.collection("energy");
 
         // ========================
         // 📅 Date Ranges
@@ -85,7 +85,7 @@ router.get("/hourly", async (req, res) => {
     try {
         const client = await getClient();
         const db = client.db("energyDB");
-        const collection = db.collection("energy_usage");
+        const collection = db.collection("energy");
 
         // pick date (or default latest date in DB)
         let queryDate;
@@ -132,7 +132,7 @@ router.get("/daily", async (req, res) => {
     try {
         const client = await getClient();
         const db = client.db("energyDB");
-        const collection = db.collection("energy_usage");
+        const collection = db.collection("energy");
 
         const month = parseInt(req.query.month);
         const year = parseInt(req.query.year);
@@ -190,7 +190,7 @@ router.get("/daily", async (req, res) => {
 //     try {
 //         const client = await getClient();
 //         const db = client.db("energyDB");
-//         const usageCollection = db.collection("energy_usage");
+//         const usageCollection = db.collection("energy");
 
 //         const { date } = req.query;
 //         if (!date) {
@@ -240,7 +240,7 @@ router.get("/devices", async (req, res) => {
     try {
         const client = await getClient();
         const db = client.db("energyDB");
-        const collection = db.collection("energy_usage");
+        const collection = db.collection("energy");
 
         const { date } = req.query;
         if (!date) {

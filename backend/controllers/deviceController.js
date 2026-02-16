@@ -26,7 +26,7 @@ export const getDevices = async (req, res) => {
   try {
     const client = await getClient();
     const db = client.db("energyDB");
-    const collection = db.collection("energy_usage");
+    const collection = db.collection("energy");
 
     const { date } = req.query;
     if (!date) {

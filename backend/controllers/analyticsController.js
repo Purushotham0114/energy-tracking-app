@@ -34,7 +34,7 @@ export const getDailyUsage = async (req, res) => {
         }
 
         const dbClient = await getClient();
-        const collection = dbClient.db("energyDB").collection("energy_usage");
+        const collection = dbClient.db("energyDB").collection("energy");
 
         const pipeline = [
             { $match: { date: { $gte: start, $lte: end } } },
@@ -97,7 +97,7 @@ export const getDeviceUsage = async (req, res) => {
         }
 
         const dbClient = await getClient();
-        const collection = dbClient.db("energyDB").collection("energy_usage");
+        const collection = dbClient.db("energyDB").collection("energy");
 
         const pipeline = [
             { $match: { date: { $gte: start, $lte: end } } },
