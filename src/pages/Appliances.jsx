@@ -10,7 +10,8 @@ const Appliances = () => {
     const [appliances, setAppliances] = useState([]); // State for fetched data
     const [loading, setLoading] = useState(true); // Optional: loading state
     useEffect(() => {
-        apiFetch('/api/devices?date=2024-03-03')
+        const today = new Date().toISOString().slice(0, 10);
+        apiFetch(`/api/devices?date=${today}`)
             .then(res => res.json())
             .then(data => {
                 setAppliances(Array.isArray(data) ? data : []);
