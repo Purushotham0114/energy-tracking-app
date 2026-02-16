@@ -18,6 +18,9 @@ import requestLogger from './middleware/logger.js'
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust first proxy (Render, Heroku, etc.) so secure cookies work behind TLS termination
+app.set('trust proxy', 1);
+
 
 // Database connection
 console.log(process.env.MONGO_URI)
